@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logarithm Properties Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .student-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9f7fe;
+            border-radius: 5px;
+        }
+        .student-info input {
+            padding: 8px;
+            margin: 5px 10px 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .option {
+            margin: 8px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            display: none;
+        }
+        .correct {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #c62828;
+        }
+        .score {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Logarithm Properties Quiz</h1>
+        
+        <div class="student-info">
+            <h3>Student Information</h3>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+            
+            <label for="section">Section:</label>
+            <input type="text" id="section" required>
+        </div>
+        
+        <div id="quiz-questions">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+        
+        <button id="submit-btn">Submit Quiz</button>
+        
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        // Question bank
+        const questionBank = [
+            {
+                question: "What is the value of log₅(25)?",
+                options: ["2", "5", "25", "125"],
+                answer: "2",
+                explanation: "Because 5² = 25, so log₅(25) = 2."
+            },
+            {
+                question: "What is logₐ(a) equal to?",
+                options: ["0", "1", "a", "Undefined"],
+                answer: "1",
+                explanation: "By definition, logₐ(a) = 1 because a¹ = a."
+            },
+            {
+                question: "What is logₐ(1) equal to?",
+                options: ["0", "1", "a", "Undefined"],
+                answer: "0",
+                explanation: "Because a⁰ = 1 for any a ≠ 0, so logₐ(1) = 0."
+            },
+            {
+                question: "Which property is expressed by logₐ(xy) = logₐx + logₐy?",
+                options: ["Power Rule", "Product Rule", "Quotient Rule", "Change of Base"],
+                answer: "Product Rule",
+                explanation: "This is the product rule of logarithms."
+            },
+            {
+                question: "What is the equivalent of logₐ(x/y)?",
+                options: [
+                    "logₐx - logₐy",
+                    "logₐx + logₐy",
+                    "logₐx * logₐy",
+                    "logₐx / logₐy"
+                ],
+                answer: "logₐx - logₐy",
+                explanation: "This is the quotient rule of logarithms."
+            },
+            {
+                question: "What is logₐ(xⁿ) equal to?",
+                options: [
+                    "n * logₐx",
+                    "logₐx + n",
+                    "logₐx * n",
+                    "x * logₐn"
+                ],
+                answer: "n * logₐx",
+                explanation: "This is the power rule of logarithms."
+            },
+            {
+                question: "What is the change of base formula for logarithms?",
+                options: [
+                    "logₐb = logₓb / logₓa",
+                    "logₐb = logₓa / logₓb",
+                    "logₐb = logₐx / logₓb",
+                    "logₐb = logₓb * logₓa"
+                ],
+                answer: "logₐb = logₓb / logₓa",
+                explanation: "The change of base formula allows you to rewrite a logarithm in terms of another base."
+            },
+            {
+                question: "What is the value of log₂(8) + log₃(9)?",
+                options: ["5", "6", "7", "8"],
+                answer: "5",
+                explanation: "log₂(8) = 3 (since 2³=8) and log₃(9) = 2 (since 3²=9), so 3 + 2 = 5."
+            },
+            {
+                question: "If log₅x = 3, what is x?",
+                options: ["15", "25", "125", "243"],
+                answer: "125",
+                explanation: "If log₅x = 3, then x = 5³ = 125."
+            },
+            {
+                question: "What is ln(e⁷)?",
+                options: ["e", "7", "e⁷", "1"],
+                answer: "7",
+                explanation: "ln(e⁷) = 7, because ln(eˣ) = x by definition of natural logarithm."
+            },
+            {
+                question: "What is the inverse function of y = logₐx?",
+                options: [
+                    "y = aˣ",
+                    "y = xᵃ",
+                    "y = logₓa",
+                    "y = x/a"
+                ],
+                answer: "y = aˣ",
+                explanation: "Logarithmic and exponential functions are inverses of each other."
+            },
+            {
+                question: "What is the value of log₄(2) + log₄(8)?",
+                options: ["1", "2", "2.5", "3"],
+                answer: "2.5",
+                explanation: "log₄(2) = 0.5 (since 4⁰·⁵=2) and log₄(8) = 1.5 (since 4¹·⁵=8), so 0.5 + 1.5 = 2."
+            },
+            {
+                question: "Which expression is equivalent to 2log₅x + 3log₅y?",
+                options: [
+                    "log₅(x²y³)",
+                    "log₅(2x + 3y)",
+                    "log₅(x² + y³)",
+                    "log₅(6xy)"
+                ],
+                answer: "log₅(x²y³)",
+                explanation: "Using the power rule and product rule: 2log₅x = log₅x², 3log₅y = log₅y³, then add them to get log₅(x²y³)."
+            },
+            {
+                question: "What is the solution to the equation log₃(x + 1) = 2?",
+                options: ["7", "8", "9", "10"],
+                answer: "8",
+                explanation: "Rewrite as x + 1 = 3² → x + 1 = 9 → x = 8."
+            },
+            {
+                question: "What is log₇(1/X) equal to?",
+                options: [
+                    "-log₇X",
+                    "1/log₇X",
+                    "log₇(-X)",
+                    "log₇X - 1"
+                ],
+                answer: "-log₇X",
+                explanation: "This comes from the power rule: log₇(1/X) = log₇(X⁻¹) = -1·log₇X = -log₇X."
+            },
+            {
+                question: "If log₂ ≈ 0.3010, what is log(200)?",
+                options: ["1.3010", "2.3010", "3.3010", "4.3010"],
+                answer: "2.3010",
+                explanation: "log(200) = log(2×100) = log2 + log100 ≈ 0.3010 + 2 = 2.3010."
+            },
+            {
+                question: "Which of these is NOT a property of logarithms?",
+                options: [
+                    "logₐ(x + y) = logₐx + logₐy",
+                    "logₐ(xy) = logₐx + logₐy",
+                    "logₐ(xⁿ) = nlogₐx",
+                    "logₐ(x/y) = logₐx - logₐy"
+                ],
+                answer: "logₐ(x + y) = logₐx + logₐy",
+                explanation: "There is no logarithm property that breaks down the log of a sum."
+            },
+            {
+                question: "What is the value of log₃(27) - log₃(9)?",
+                options: ["0", "1", "2", "3"],
+                answer: "1",
+                explanation: "log₃(27) = 3 (3³=27), log₃(9) = 2 (3²=9), so 3 - 2 = 1."
+            },
+            {
+                question: "If logₓ16 = 2, what is x?",
+                options: ["2", "4", "8", "16"],
+                answer: "4",
+                explanation: "logₓ16 = 2 means x² = 16 → x = 4 (we ignore the negative solution since base must be positive)."
+            },
+            {
+                question: "What is the domain of the function f(x) = log₃(x - 2)?",
+                options: [
+                    "All real numbers",
+                    "x > 0",
+                    "x > 2",
+                    "x > 3"
+                ],
+                answer: "x > 2",
+                explanation: "The argument of a logarithm must be positive, so x - 2 > 0 → x > 2."
+            },
+            {
+                question: "What is the value of 10^(log(5))?",
+                options: ["1", "5", "10", "50"],
+                answer: "5",
+                explanation: "10^log(x) = x for any x > 0, because exponential and logarithmic functions are inverse operations."
+            },
+            {
+                question: "Which expression is equivalent to log₅(25x)?",
+                options: [
+                    "2 + log₅x",
+                    "2log₅x",
+                    "25 + log₅x",
+                    "log₅2 + log₅5 + log₅x"
+                ],
+                answer: "2 + log₅x",
+                explanation: "log₅(25x) = log₅25 + log₅x = 2 + log₅x (since 5² = 25)."
+            },
+            {
+                question: "What is the solution to the equation 2ˣ = 8?",
+                options: ["2", "3", "4", "5"],
+                answer: "3",
+                explanation: "Rewrite 8 as 2³, so 2ˣ = 2³ → x = 3."
+            },
+            {
+                question: "What is the value of ln(e²) + ln(e³)?",
+                options: ["5", "6", "e⁵", "e⁶"],
+                answer: "5",
+                explanation: "ln(e²) = 2, ln(e³) = 3, so 2 + 3 = 5."
+            },
+            {
+                question: "Which of these is equal to log₃7?",
+                options: [
+                    "log7 / log3",
+                    "log3 / log7",
+                    "ln3 / ln7",
+                    "log₇3"
+                ],
+                answer: "log7 / log3",
+                explanation: "This is the change of base formula: log₃7 = log7 / log3 (can use any base, but both must be the same)."
+            },
+            {
+                question: "What is the value of log₂√8?",
+                options: ["1.5", "2", "2.5", "3"],
+                answer: "1.5",
+                explanation: "√8 = 8⁰·⁵ = (2³)⁰·⁵ = 2¹·⁵, so log₂(2¹·⁵) = 1.5."
+            },
+            {
+                question: "If logₐb = c, which equation is correct?",
+                options: [
+                    "aᵇ = c",
+                    "bᶜ = a",
+                    "aᶜ = b",
+                    "cᵃ = b"
+                ],
+                answer: "aᶜ = b",
+                explanation: "By definition of logarithms, logₐb = c means aᶜ = b."
+            },
+            {
+                question: "What is the value of log₅(1/25)?",
+                options: ["-2", "-1", "1", "2"],
+                answer: "-2",
+                explanation: "1/25 = 5⁻², so log₅(5⁻²) = -2."
+            }
+        ];
+
+        // Function to shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to generate the quiz
+        function generateQuiz() {
+            const quizContainer = document.getElementById('quiz-questions');
+            quizContainer.innerHTML = '';
+            
+            // Shuffle questions and select 20
+            const shuffledQuestions = shuffleArray([...questionBank]).slice(0, 20);
+            
+            shuffledQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.dataset.correctAnswer = q.answer;
+                questionDiv.dataset.explanation = q.explanation;
+                
+                const questionText = document.createElement('p');
+                questionText.innerHTML = `<strong>Question ${index + 1}:</strong> ${q.question}`;
+                questionDiv.appendChild(questionText);
+                
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                // Shuffle options
+                const shuffledOptions = shuffleArray([...q.options]);
+                
+                shuffledOptions.forEach(option => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question-${index}`;
+                    radio.value = option;
+                    radio.id = `question-${index}-${option}`;
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `question-${index}-${option}`;
+                    label.textContent = option;
+                    
+                    optionDiv.appendChild(radio);
+                    optionDiv.appendChild(label);
+                    optionsDiv.appendChild(optionDiv);
+                });
+                
+                questionDiv.appendChild(optionsDiv);
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Function to calculate results
+        function calculateResults() {
+            const name = document.getElementById('name').value;
+            const section = document.getElementById('section').value;
+            
+            if (!name || !section) {
+                alert('Please enter your name and section before submitting.');
+                return;
+            }
+            
+            const questions = document.querySelectorAll('.question');
+            let score = 0;
+            let resultsHTML = `
+                <h3>Quiz Results for ${name} (${section})</h3>
+                <div class="score">Score: 0/${questions.length}</div>
+            `;
+            
+            questions.forEach((q, index) => {
+                const selectedOption = q.querySelector('input[type="radio"]:checked');
+                const correctAnswer = q.dataset.correctAnswer;
+                const explanation = q.dataset.explanation;
+                
+                if (selectedOption) {
+                    const userAnswer = selectedOption.value;
+                    const isCorrect = userAnswer === correctAnswer;
+                    
+                    if (isCorrect) score++;
+                    
+                    resultsHTML += `
+                        <div class="question-result ${isCorrect ? 'correct' : 'incorrect'}">
+                            <p><strong>Question ${index + 1}:</strong> ${q.querySelector('p').textContent.replace(`Question ${index + 1}: `, '')}</p>
+                            <p>Your answer: ${userAnswer} ${isCorrect ? '✓' : '✗'}</p>
+                            <p>Correct answer: ${correctAnswer}</p>
+                            <p>Explanation: ${explanation}</p>
+                        </div>
+                    `;
+                } else {
+                    resultsHTML += `
+                        <div class="question-result incorrect">
+                            <p><strong>Question ${index + 1}:</strong> ${q.querySelector('p').textContent.replace(`Question ${index + 1}: `, '')}</p>
+                            <p>You did not answer this question.</p>
+                            <p>Correct answer: ${correctAnswer}</p>
+                            <p>Explanation: ${explanation}</p>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Update score in results
+            resultsHTML = resultsHTML.replace(`Score: 0/${questions.length}`, `Score: ${score}/${questions.length}`);
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = resultsHTML;
+            resultsDiv.style.display = 'block';
+            
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', generateQuiz);
+        document.getElementById('submit-btn').addEventListener('click', calculateResults);
+    </script>
+</body>
+</html>
